@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function admin() { return request.auth != null && request.auth.token.admin == true; }
+    function validPackage(d) {
+      return d.keys().hasAll(['name','tier','stars','nights','makkahNights','madinahNights','price','currency','image','imageAlt','badge','months','type','description','includes','published','isDemo','departureDate','returnDate','makkahHotel','madinahHotel','updatedAt','createdAt'])
+        && d.keys().hasOnly(['name','tier','stars','nights','makkahNights','madinahNights','price','currency','image','imageAlt','badge','months','type','description','includes','published','isDemo','departureDate','returnDate','makkahHotel','madinahHotel','updatedAt','createdAt'])
+        && d.name is string && d.name.size() >= 3 && d.name.size() <= 100
+        && d.tier in ['Platinum 5 Star','Gold 5 Star','Silver 4 Star','Special Programs']
+        && d.type in ['Private','Group','Family'] && d.currency in ['USD','PKR','SAR']
+        && d.stars is int && d.stars >= 1 && d.stars <= 5
+        && d.nights is int && d.nights >= 1 && d.nights <= 60
+        && d.makkahNights is int && d.makkahNights >= 0 && d.makkahNights <= 60
+        && d.madinahNights is int && d.madinahNights >= 0 && d.madinahNights <= 60
+        && d.nights == d.makkahNights + d.madinahNights
+        && d.price is number && d.price > 0 && d.price <= 100000000
+        && d.image is string && d.image.size() <= 2000 && (d.image.matches('https://[^ ]+') || d.image.matches('/[^/ ].*'))
+        && d.imageAlt is string && d.imageAlt.size() >= 3 && d.imageAlt.size() <= 200
+        && d.badge is string && d.badge.size() <= 50
+        && d.description is string && d.description.size() >= 20 && d.description.size() <= 3000
+        && d.months is list && d.months.size() >= 1 && d.months.size() <= 36
+        && d.includes is list && d.includes.size() >= 1 && d.includes.size() <= 20
+        && d.published is bool && d.isDemo is bool
+        && d.departureDate is string && d.returnDate is string
+        && ((d.departureDate == '' && d.returnDate == '') || (d.departureDate.matches('[0-9]{4}-[0-9]{2}-[0-9]{2}') && d.returnDate.matches('[0-9]{4}-[0-9]{2}-[0-9]{2}') && d.returnDate > d.departureDate))
+        && d.makkahHotel is string && d.makkahHotel.size() <= 150
+        && d.madinahHotel is string && d.madinahHotel.size() <= 150
+        && d.updatedAt == request.time && d.createdAt is timestamp;
+    }
+    match /packages/{id} {
+      allow read: if admin() || resource.data.published == true;
+      allow create: if admin() && validPackage(request.resource.data) && request.resource.data.createdAt == request.time;
+      allow update: if admin() && validPackage(request.resource.data) && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if admin();
+    }
+    match /settings/public {
+      allow read: if true;
+      allow create, update: if admin()
+        && request.resource.data.keys().hasAll(['googlePlaceId','youtubeChannelUrl','shorts','updatedAt'])
+        && request.resource.data.keys().hasOnly(['googlePlaceId','youtubeChannelUrl','shorts','updatedAt'])
+        && request.resource.data.googlePlaceId is string && request.resource.data.googlePlaceId.size() <= 300
+        && request.resource.data.googlePlaceId.matches('[A-Za-z0-9_-]*')
+        && request.resource.data.youtubeChannelUrl is string && request.resource.data.youtubeChannelUrl.size() <= 300
+        && (request.resource.data.youtubeChannelUrl == '' || request.resource.data.youtubeChannelUrl.matches('https://(www[.])?youtube[.]com/.*'))
+        && request.resource.data.shorts is list && request.resource.data.shorts.size() <= 12
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if admin();
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}

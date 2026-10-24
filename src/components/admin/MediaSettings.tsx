@@ -1,0 +1,21 @@
+import { useEffect, useState, type FormEvent } from 'react';
+import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { Plus, Trash2 } from 'lucide-react';
+import { db } from '../../lib/firebase';
+import { friendlyError, settingsSchema, youtubeId } from '../../lib/cms';
+import { defaultSettings } from '../../hooks/useSiteSettings';
+import type { SiteSettings } from '../../types';
+export default function MediaSettings() {
+  const [form, setForm] = useState<SiteSettings>(defaultSettings); const [loading, setLoading] = useState(true); const [busy, setBusy] = useState(false); const [loadError, setLoadError] = useState(false); const [message, setMessage] = useState('');
+  useEffect(() => { let active = true; if (db) getDoc(doc(db, 'settings', 'public')).then(snapshot => { if (!active) return; if (snapshot.exists()) { const parsed = settingsSchema.safeParse(snapshot.data()); if (!parsed.success) throw new Error('invalid-settings'); setForm(parsed.data); } setLoading(false); }).catch(error => { if (active) { setMessage(friendlyError(error)); setLoadError(true); setLoading(false); } }); return () => { active = false; }; }, []);
+  async function save(event: FormEvent) {
+    event.preventDefault(); const parsed = settingsSchema.safeParse({ ...form, shorts: form.shorts.map(short => ({ ...short, videoId: youtubeId(short.videoId) || short.videoId })) });
+    if (!parsed.success) { setMessage(parsed.error.issues.map(issue => `${issue.path.join('.')}: ${issue.message}`).join(' ')); return; }
+    if (!db) return; setBusy(true); setMessage('');
+    try { await setDoc(doc(db, 'settings', 'public'), { ...parsed.data, updatedAt: serverTimestamp() }); setForm(parsed.data); setMessage('Media settings saved. The website updates automatically.'); }
+    catch (error) { setMessage(friendlyError(error)); } finally { setBusy(false); }
+  }
+  if (loading) return <p role="status">Loading media settings…</p>;
+  if (loadError) return <p role="alert" className="admin-message">{message} Reload this page to retry.</p>;
+  return <section className="admin-panel"><p className="eyebrow text-ocean-600">REVIEWS & SHORTS</p><h2>Real stories. Real connections.</h2><form className="admin-form" onSubmit={save}><fieldset disabled={busy}><h3>Google reviews</h3><label>Google Business Place ID<input value={form.googlePlaceId} placeholder="ChIJ…" onChange={e => setForm({ ...form, googlePlaceId: e.target.value })}/></label><p className="admin-help">Use the Place ID for your Rihla listing, not a Maps short link. The deployed Firebase function retrieves reviews directly from Google. Set the Places API key in Firebase Secret Manager; never enter it here.</p><h3>YouTube Shorts</h3><label>YouTube channel URL (optional)<input type="url" value={form.youtubeChannelUrl} placeholder="https://www.youtube.com/@yourchannel" onChange={e => setForm({ ...form, youtubeChannelUrl: e.target.value })}/></label><p className="admin-help">Add up to 12 Shorts in display order. Paste a Shorts link, YouTube URL, or video ID. Only videos with embedding enabled can play here.</p><div className="admin-short-list">{form.shorts.map((short, index) => <div className="admin-short-row" key={short.id}><span>{index + 1}</span><label>Video title<input required value={short.title} onChange={e => setForm({ ...form, shorts: form.shorts.map(item => item.id === short.id ? { ...item, title: e.target.value } : item) })}/></label><label>YouTube URL or video ID<input required value={short.videoId} onChange={e => setForm({ ...form, shorts: form.shorts.map(item => item.id === short.id ? { ...item, videoId: e.target.value } : item) })}/></label><button type="button" className="icon-button" aria-label={`Remove video ${index + 1}`} onClick={() => setForm({ ...form, shorts: form.shorts.filter(item => item.id !== short.id) })}><Trash2 size={17}/></button></div>)}</div><button type="button" disabled={form.shorts.length >= 12} className="button button-outline" onClick={() => setForm({ ...form, shorts: [...form.shorts, { id: crypto.randomUUID(), title: '', videoId: '' }] })}><Plus size={16}/> Add Short</button>{message && <p className="admin-message" role="status">{message}</p>}<div className="mt-6"><button type="submit" className="button button-primary">{busy ? 'Saving…' : 'Save media settings'}</button></div></fieldset></form></section>;
+}

@@ -1,0 +1,52 @@
+.testimonials-band { background: #fffcf5; }
+.google-review-strip { display: grid; grid-template-columns: 230px minmax(0, 1fr); align-items: center; gap: 36px; padding-block: 18px; }
+.google-rating-summary { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; color: #0f172a; }
+.google-rating-summary > svg { color: #d97706; }
+.google-rating-summary h3 { font-size: 23px; font-weight: 600; }
+.google-rating-summary p { font-size: 16px; line-height: 1.5; margin: 0; }
+.google-rating-number { font-size: 34px; font-weight: 700; line-height: 1.2; }
+.google-rating-number small { font-size: 18px; color: #475569; font-weight: 400; }
+.google-rating-summary .google-attribution { margin-top: 5px; font-size: 22px; }
+.rating-stars { display: inline-flex; gap: 3px; }
+.rating-star { display: inline-block; position: relative; width: 18px; height: 18px; color: #d1d5db; }
+.rating-star svg { width: 18px; height: 18px; fill: currentColor; stroke-width: 0; }
+.rating-star > span { position: absolute; top: 0; left: 0; height: 100%; overflow: hidden; color: #f59e0b; }
+.google-rating-summary .rating-star, .google-rating-summary .rating-star svg { width: 29px; height: 29px; }
+.google-review-carousel { position: relative; min-width: 0; }
+.google-review-track { display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - 40px) / 3); gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 8px 2px 18px; scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
+.google-strip-card { scroll-snap-align: start; min-width: 0; background: #fff; border: 1px solid #ececec; border-radius: 14px; padding: 22px 20px; box-shadow: 0 5px 12px #0f172a0c; display: flex; align-items: start; flex-direction: column; gap: 12px; }
+.google-strip-card > header { display: flex; gap: 10px; align-items: center; width: 100%; }
+.google-strip-avatar { flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: #1e293b; color: #fff; display: grid; place-items: center; font-size: 22px; }
+.google-strip-avatar img { height: 100%; width: 100%; object-fit: cover; }
+.google-strip-author { min-width: 0; flex: 1; line-height: 1.4; }
+.google-strip-author a, .google-strip-author strong { display: block; color: #0f172a; font-size: 16px; font-weight: 600; overflow-wrap: anywhere; }
+.google-strip-author > span { display: block; font-size: 14px; color: #64748b; }
+.google-strip-source { color: #2563eb; flex-shrink: 0; }
+.google-strip-card blockquote { font-size: 16px; line-height: 1.55; color: #1e293b; overflow-wrap: anywhere; margin: 0; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.google-strip-card blockquote.expanded { display: block; }
+.review-expand { color: #475569; font-size: 14px; text-align: left; padding: 4px 0; min-height: 36px; }
+.review-expand:hover { color: #2563eb; text-decoration: underline; }
+.google-strip-attribution { font-family: Arial, sans-serif; font-size: 13px; color: #475569; margin-top: auto; padding-top: 4px; }
+.review-carousel-arrow { position: absolute; z-index: 1; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border: 1px solid #cbd5e1; background: #fff; color: #0f172a; border-radius: 50%; display: grid; place-items: center; box-shadow: 0 2px 7px #0f172a12; }
+.review-carousel-arrow.previous { left: -17px; }
+.review-carousel-arrow.next { right: -17px; }
+.review-carousel-arrow:hover:not(:disabled) { background: #0f172a; color: #fff; }
+.review-carousel-arrow:disabled { opacity: .4; }
+.google-review-unavailable { padding: 32px; min-height: 225px; background: white; border: 1px solid #e2e8f0; border-radius: 14px; box-shadow: 0 5px 12px #0f172a0c; }
+.google-review-unavailable h3 { font-size: 25px; color: #0f172a; }
+.google-review-unavailable p { font-size: 16px; margin-block: 12px 20px; }
+.google-review-unavailable .text-link { margin-left: 20px; }
+.google-review-disclosure { font-size: 14px; color: #64748b; text-align: center; margin-top: 18px; }
+.google-review-disclosure a { text-decoration: underline; }
+@media (max-width: 1100px) {
+  .google-review-strip { grid-template-columns: 190px minmax(0, 1fr); gap: 26px; }
+  .google-review-track { grid-auto-columns: calc((100% - 20px) / 2); }
+}
+@media (max-width: 767px) {
+  .google-review-strip { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+  .google-review-carousel { margin-inline: 15px; }
+  .google-review-track { grid-auto-columns: 100%; }
+  .google-strip-card { padding: 22px; }
+  .google-review-unavailable { padding: 24px; }
+  .google-review-unavailable .button { width: 100%; }
+}

@@ -1,0 +1,10 @@
+import { useState } from 'react';
+import { ArrowLeft, ArrowRight, BadgeCheck, Quote, Star } from 'lucide-react';
+import { reviews } from '../data/content';
+export default function Testimonials() {
+  const [index, setIndex] = useState(0);
+  const shown = [...reviews.slice(index), ...reviews.slice(0, index)];
+  return <section id="testimonials" className="section page-shell"><div className="section-heading"><div><p className="eyebrow text-ocean-600">FAITH BRINGS US TOGETHER</p><h2>Meaningful journeys.<br className="sm:hidden"/> <em>Lasting impressions.</em></h2></div><div className="review-controls"><button className="icon-button" aria-label="Previous traveller story" onClick={() => setIndex((index + reviews.length - 1) % reviews.length)}><ArrowLeft size={18}/></button><button className="icon-button" aria-label="Next traveller story" onClick={() => setIndex((index + 1) % reviews.length)}><ArrowRight size={18}/></button></div></div>
+    <div className="review-disclosure"><span className="stars"><Star size={14} fill="currentColor"/></span><span>Traveller stories preview · Illustrative content, not verified customer reviews. Review score pending verification.</span></div><div className="reviews-grid" aria-live="polite">{shown.map(review => <article className="review-card" key={review.id}><div className="flex items-center justify-between"><span className="stars" aria-label={`${review.rating} stars, illustrative`}>{Array.from({ length: review.rating }, (_, index) => <Star key={index} size={13} fill="currentColor"/>)}</span><Quote size={28} strokeWidth={1} className="text-slate-300"/></div><blockquote>“{review.text}”</blockquote><div className="review-author"><span className="avatar">{review.name[0]}</span><div><strong>{review.name}</strong><span>{review.location} · {review.trip}</span></div>{review.verified ? <BadgeCheck aria-label="Verified customer" size={19} className="text-ocean-600"/> : <span className="sample-badge">Example</span>}</div></article>)}</div>
+  </section>;
+}
