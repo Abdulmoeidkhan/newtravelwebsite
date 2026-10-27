@@ -1,6 +1,18 @@
 # Rihla: completed work and next steps
 
-Last reviewed: **24 October 2026 (Asia/Karachi)**.
+Last reviewed: **27 October 2026 (Asia/Karachi)**.
+
+## 27 October — Google Reviews audit and catalogue freshness
+
+- Added a keyboard-accessible **Show password** checkbox to admin sign-in. Passwords are hidden by default; toggling visibility preserves the entered value and does not submit the form.
+
+- Added `node scripts/check-reviews-setup.mjs`, a read-only audit using the existing Firebase CLI login. It checks billing, Places API, secret-version metadata (never secret values), the review function, saved Place ID, Shorts count and App Check.
+- Live audit: billing is disabled; Places API is disabled; `getGoogleReviews` is absent; saved Place ID is empty; five Shorts remain configured; App Check has no configured Enterprise site key. Secret metadata returned HTTP 403, so secret existence could not be verified. No billing changes or deployment were attempted.
+- Live reviews remain blocked until billing is resumed and the API, secret, verified Place ID and App Check are configured. The current Google listing link remains usable.
+- Implemented the roadmap's public catalogue freshness behavior: departures before today's Karachi date disappear from upcoming packages; flexible packages expire after their last availability month. Old months are removed from public filters. Open pages refresh the date every minute and when the window receives focus.
+- This is public filtering, not a database archive operation: records remain unchanged and accessible in admin. Staff can still unpublish offers using the existing publication control. No sample packages were published.
+- Added tests for Karachi midnight, past departures with future return dates, today's/future departures, flexible monthly availability and preservation of original records.
+- Validation: all 38 frontend tests passed; the TypeScript/production build passed. Existing dependency-comment and Firebase bundle-size warnings remain. The audit script also passed Node syntax checking.
 
 ## Latest media update
 
@@ -113,7 +125,7 @@ The package, accommodation and registration subpages could not be retrieved duri
 
 Do not copy the reference company's prices, reviews, accreditation, partnerships, office locations or experience claims. Use only Rihla's verified information.
 
-One opportunity to improve on the reference: its homepage still showed June/July 2026 packages under “upcoming” at review time. Rihla's catalogue currently sorts published packages but does not automatically hide expired departures. Add an expiry/archive rule so upcoming inventory stays current. [Source: reference homepage](https://umrahlane.com/).
+One opportunity identified in the reference: its homepage showed June/July 2026 packages under “upcoming” at the original review time. Rihla now filters expired departures from the public catalogue while retaining records for staff. [Source: reference homepage](https://umrahlane.com/).
 
 ## 4. Recommended order of work
 
@@ -131,7 +143,7 @@ One opportunity to improve on the reference: its homepage still showed June/July
 
 1. Add individual package URLs, category pages and package-specific social sharing metadata.
 2. Extend package information with itinerary, room-sharing options, exclusions, meal arrangements and verified hotel distance information where available.
-3. Archive expired departures automatically and allow the admin to mark offers unavailable.
+3. **Public expiry filtering completed 27 October.** Expired departures are hidden automatically; admin retains the records and can unpublish offers. A separate archival status is not implemented.
 4. Save inquiries securely with package reference, contact details, travel preferences, status and assigned staff. Keep passport/document collection outside this first inquiry step.
 5. Define staff versus customer roles before giving ordinary accounts new access.
 

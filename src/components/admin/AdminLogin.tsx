@@ -1,10 +1,11 @@
-import { useState, type FormEvent } from 'react';
+﻿import { useState, type FormEvent } from 'react';
 import { browserSessionPersistence, sendPasswordResetEmail, setPersistence, signInWithEmailAndPassword } from 'firebase/auth';
 import { LockKeyhole } from 'lucide-react';
 import { auth } from '../../lib/firebase';
 import Brand from '../Brand';
 export default function AdminLogin() {
   const [email, setEmail] = useState(''); const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false); const [message, setMessage] = useState('');
   async function submit(event: FormEvent) {
     event.preventDefault(); if (!auth) return; setBusy(true); setMessage('');
@@ -19,5 +20,7 @@ export default function AdminLogin() {
     catch { setMessage('Could not request a reset. Check your connection and try again.'); }
     finally { setBusy(false); }
   }
-  return <main className="admin-login"><div className="admin-login-card"><Brand/><div className="admin-lock"><LockKeyhole/></div><p className="eyebrow text-ocean-600">RIHLA MANAGEMENT</p><h1>Welcome back.</h1><p>Sign in to manage your packages and travel stories.</p><form className="admin-form" onSubmit={submit}><label>Email address<input required type="email" autoComplete="username" value={email} onChange={e => setEmail(e.target.value)}/></label><label>Password<input required type="password" autoComplete="current-password" value={password} onChange={e => setPassword(e.target.value)}/></label><button disabled={busy} className="button button-primary">{busy ? 'Please wait…' : 'Sign in securely'}</button></form><button className="text-link mt-5" disabled={busy} onClick={reset}>Forgot your password?</button>{message && <p className="admin-message" role="status">{message}</p>}<a href="/" className="admin-return">← Back to Rihla</a></div></main>;
+  return <main className="admin-login"><div className="admin-login-card"><Brand/><div className="admin-lock"><LockKeyhole/></div><p className="eyebrow text-ocean-600">RIHLA MANAGEMENT</p><h1>Welcome back.</h1><p>Sign in to manage your packages and travel stories.</p><form className="admin-form" onSubmit={submit}><label>Email address<input required type="email" autoComplete="username" value={email} onChange={e => setEmail(e.target.value)}/></label><label>Password<input id="admin-password" required type={showPassword ? 'text' : 'password'} autoComplete="current-password" value={password} onChange={e => setPassword(e.target.value)}/></label><label className="!flex items-center gap-2"><input type="checkbox" checked={showPassword} onChange={event => setShowPassword(event.target.checked)} aria-controls="admin-password"/> Show password</label><button disabled={busy} className="button button-primary">{busy ? 'Please wait…' : 'Sign in securely'}</button></form><button className="text-link mt-5" disabled={busy} onClick={reset}>Forgot your password?</button>{message && <p className="admin-message" role="status">{message}</p>}<a href="/" className="admin-return">← Back to Rihla</a></div></main>;
 }
+
+

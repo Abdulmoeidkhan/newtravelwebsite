@@ -13,6 +13,7 @@
 .rating-star > span { position: absolute; top: 0; left: 0; height: 100%; overflow: hidden; color: #f59e0b; }
 .google-rating-summary .rating-star, .google-rating-summary .rating-star svg { width: 29px; height: 29px; }
 .google-review-carousel { position: relative; min-width: 0; }
+.google-strip-card { position: relative; }
 .google-review-track { display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - 40px) / 3); gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 8px 2px 18px; scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
 .google-strip-card { scroll-snap-align: start; min-width: 0; background: #fff; border: 1px solid #ececec; border-radius: 14px; padding: 22px 20px; box-shadow: 0 5px 12px #0f172a0c; display: flex; align-items: start; flex-direction: column; gap: 12px; }
 .google-strip-card > header { display: flex; gap: 10px; align-items: center; width: 100%; }
