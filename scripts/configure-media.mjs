@@ -15,6 +15,23 @@ if (!response.ok && response.status !== 404) throw new Error(`Reading media fail
 const existing = response.ok ? await response.json() : null;
 if (process.argv[2] === 'inspect') {
   console.log(JSON.stringify(existing?.fields || {}));
+} else if (process.argv[2] === 'set-place-id') {
+  const placeId = process.argv[3];
+  if (!placeId || !/^[A-Za-z0-9_-]{1,300}$/.test(placeId)) throw new Error('Provide a valid Google Place ID.');
+  const query = new URLSearchParams();
+  query.append('updateMask.fieldPaths', 'googlePlaceId');
+  query.append('updateMask.fieldPaths', 'updatedAt');
+  if (existing) query.set('currentDocument.updateTime', existing.updateTime);
+  else query.set('currentDocument.exists', 'false');
+  const saved = await fetch(`${url}?${query}`, { method: 'PATCH', headers, body: JSON.stringify({ fields: {
+    googlePlaceId: { stringValue: placeId }, updatedAt: { timestampValue: new Date().toISOString() },
+  } }) });
+  if (!saved.ok) throw new Error(`Saving Place ID failed: ${saved.status}`);
+  const verified = await fetch(url, { headers });
+  if (!verified.ok) throw new Error('Unable to verify saved Place ID.');
+  const doc = await verified.json();
+  if (doc.fields?.googlePlaceId?.stringValue !== placeId) throw new Error('Saved Place ID does not match.');
+  console.log(JSON.stringify({ saved: true, googlePlaceId: placeId }));
 } else if (process.argv[2] === 'apply') {
   const media = JSON.parse(readFileSync(new URL('../src/data/media.json', import.meta.url), 'utf8'));
   const encode = value => typeof value === 'string' ? { stringValue: value } : Array.isArray(value) ? { arrayValue: { values: value.map(encode) } } : { mapValue: { fields: Object.fromEntries(Object.entries(value).map(([key, item]) => [key, encode(item)])) } };
@@ -32,4 +49,4 @@ if (process.argv[2] === 'inspect') {
   const ids = doc.fields.shorts.arrayValue.values.map(item => item.mapValue.fields.videoId.stringValue);
   if (JSON.stringify(ids) !== JSON.stringify(media.shorts.map(item => item.videoId))) throw new Error('Saved video order does not match.');
   console.log(JSON.stringify({ saved: true, shorts: ids, channel: doc.fields.youtubeChannelUrl.stringValue, googlePlaceId: doc.fields.googlePlaceId.stringValue }));
-} else throw new Error('Usage: node scripts/configure-media.mjs inspect|apply');
+} else throw new Error('Usage: node scripts/configure-media.mjs inspect|apply|set-place-id PLACE_ID');

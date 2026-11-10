@@ -368,3 +368,7 @@
   html { scroll-behavior: auto; }
   *, *:before, *:after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+.rw-branding {
+  display: none !important;
+}

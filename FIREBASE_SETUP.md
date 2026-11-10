@@ -49,6 +49,8 @@ npm run grant-admin --prefix functions -- rihla-a5ae9 FIREBASE_AUTH_UID
 
 ## Google reviews
 
+Update, 29 October 2026: the owner-supplied Place ID `ChIJ4e45rY0_sz4RNdRDgQZZelM` is saved and verified in Firestore `settings/public` and in the local media defaults. The setup audit still reports billing disabled, Places API disabled, no deployed `getGoogleReviews` function, and no App Check configuration or local site key. Access to inspect the Places secret returned 403, so its presence could not be verified. The Google Maps link uses this listing; live review cards require completing the steps below.
+
 1. Enable **Places API (New)** in the Google Cloud project and configure billing/quota controls. Cloud Functions deployment requires the appropriate Firebase billing plan.
 2. Create an API key restricted to Places API (New). Store it as a server-side secret:
 
@@ -90,6 +92,7 @@ npm test --prefix functions
 For security and browser integration tests, install Java 21+ and start **isolated** emulators (never point these scripts at production):
 
 ```sh
+
 npx firebase-tools emulators:start --only auth,firestore --project demo-rihla
 ```
 

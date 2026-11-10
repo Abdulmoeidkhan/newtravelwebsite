@@ -6,7 +6,7 @@ import Navbar from './components/Navbar';
 import HeroSection from './components/HeroSection';
 import PackageCardGrid from './components/PackageCardGrid';
 import ServicesGrid from './components/ServicesGrid';
-import GoogleReviews from './components/GoogleReviews';
+import WeWidgetReviews from './components/WeWidgetReviews';
 import YouTubeShorts from './components/YouTubeShorts';
 import { HajjSection, SpecialPackages, WhyRihla } from './components/JourneySections';
 import { useCatalog } from './hooks/useCatalog';
@@ -34,7 +34,7 @@ function PublicSite() {
     <HeroSection/><div className="journey-strip"><div className="page-shell">{[{ icon: Hotel, title: 'Makkah & Madinah stays' }, { icon: Plane, title: 'Flights & visa guidance' }, { icon: Users, title: 'Family & group journeys' }, { icon: Compass, title: 'Personal itinerary planning' }].map(({ icon: Icon, title }) => <a href="#services" key={title}><Icon size={30}/><span>{title}</span></a>)}</div></div>
     <PackageCardGrid items={catalog.items} loading={catalog.loading} error={catalog.error} filters={filters} onFilters={setFilters} onSelect={selectPackage}/>
     <ServicesGrid/><SpecialPackages items={catalog.items} onSelect={selectPackage} onInquiry={inquire}/>
-    <div className="testimonials-band"><GoogleReviews placeId={settings.googlePlaceId}/>{(settings.shorts.length > 0 || settings.youtubeChannelUrl) && <YouTubeShorts settings={settings}/>}</div>
+    <div className="testimonials-band"><WeWidgetReviews/>{(settings.shorts.length > 0 || settings.youtubeChannelUrl) && <YouTubeShorts settings={settings}/>}</div>
     <HajjSection onInquiry={inquire}/><WhyRihla/><InquiryFormSection preset={preset}/>
   </main><Footer/><StickyFloatingCTAs onInquiry={inquire}/></div></MotionConfig>;
 }
